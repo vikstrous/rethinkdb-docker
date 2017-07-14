@@ -1,24 +1,24 @@
-FROM alpine:3.5
+FROM alpine:3.6
 
-ARG VERSION=2.3.5
+ARG GIT_HASH=cfee565ebb0a1db07619c9008a9b8b37e21be166
 
 RUN \
     apk add --update \
         alpine-sdk bash python perl protobuf-dev icu-dev \
         libressl-dev curl-dev boost-dev linux-headers \
-        bsd-compat-headers m4 paxmark libexecinfo-dev
+        bsd-compat-headers m4 paxmark libexecinfo-dev unzip nodejs-npm && \
+        npm install -g coffeescript browserify@13.1.0
 
 RUN \
-    wget https://download.rethinkdb.com/dist/rethinkdb-$VERSION.tgz && \
-    gunzip rethinkdb-$VERSION.tgz && \
-    tar xvf rethinkdb-$VERSION.tar && \
-    rm rethinkdb-$VERSION.tar
+    wget https://github.com/rethinkdb/rethinkdb/archive/$GIT_HASH.zip && \
+    unzip $GIT_HASH.zip && \
+    rm $GIT_HASH.zip
 
 
-COPY libressl.patch ./rethinkdb-$VERSION/libressl.patch
+COPY libressl.patch ./rethinkdb-$GIT_HASH/libressl.patch
 
 RUN \
-    cd rethinkdb-$VERSION && \
+    cd rethinkdb-$GIT_HASH && \
     patch -p1 < libressl.patch && \
     ./configure \
         --prefix=/usr \
