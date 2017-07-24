@@ -1,16 +1,15 @@
-FROM alpine:3.6
+FROM s390x/alpine:3.6
 
-ARG GIT_HASH=cfee565ebb0a1db07619c9008a9b8b37e21be166
+ARG GIT_HASH=64a82865ae06e5317b65c9ba4514697210e2aab2
 
 RUN \
     apk add --update \
         alpine-sdk bash python perl protobuf-dev icu-dev \
         libressl-dev curl-dev boost-dev linux-headers \
-        bsd-compat-headers m4 paxmark libexecinfo-dev unzip nodejs-npm && \
-        npm install -g coffeescript browserify@13.1.0
+        bsd-compat-headers m4 paxmark libexecinfo-dev unzip
 
 RUN \
-    wget https://github.com/rethinkdb/rethinkdb/archive/$GIT_HASH.zip && \
+    wget https://github.com/linux-on-ibm-z/rethinkdb/archive/$GIT_HASH.zip && \
     unzip $GIT_HASH.zip && \
     rm $GIT_HASH.zip
 
@@ -25,7 +24,8 @@ RUN \
         --sysconfdir=/etc \
         --localstatedir=/var \
         --dynamic all \
-        --with-system-malloc && \
+        --with-system-malloc \
+        --allow-fetch && \
     export LDFLAGS="$LDFLAGS -lexecinfo" && \
     export CXXFLAGS="$CXXFLAGS -fno-delete-null-pointer-checks" && \
     make --jobs $(grep -c '^processor' /proc/cpuinfo) SPLIT_SYMBOLS=1 || \
