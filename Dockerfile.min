@@ -1,8 +1,4 @@
-FROM s390x/alpine:3.6
-
-RUN \
-    apk add --update \
-        ca-certificates libstdc++ libgcc libcurl protobuf libexecinfo
+FROM s390x/ubuntu:16.04
 
 COPY rethinkdb /usr/local/bin/rethinkdb
 
