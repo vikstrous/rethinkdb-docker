@@ -1,5 +1,9 @@
 FROM s390x/ubuntu:16.04
 
+RUN apt-get update && \
+    apt-get install -y libssl1.0.0 libprotobuf9.5 libssl1.0 libcurl3 && \
+    rm -rf /var/lib/apt/lists/*
+
 COPY rethinkdb /usr/local/bin/rethinkdb
 
 ENTRYPOINT ["rethinkdb"]
